@@ -10,7 +10,7 @@
 <body>
     <h1 class="text-center my-4">Waiter Orders</h1>
     <div class="input-group container-fluid w-75">
-  <input type="text" aria-label="price" id="price" placeholder="Choose Price..." class="form-control">
+  <input type="number" aria-label="price" id="price" placeholder="Choose Price..." class="form-control">
   <input type="text" aria-label="dish" id="dish" placeholder="Choose Dish..." class="form-control">
   <select class="form-select" id="table" aria-label="Default select example">
     <option selected>Choose Table</option>
@@ -54,14 +54,68 @@ let ulTable1 = document.querySelector('ul.table-1');
 let ulTable2 = document.querySelector('ul.table-2');
 let ulTable3 = document.querySelector('ul.table-3');
 
-const submitOrder = () => {
+window.onload = () => {
+    axios.get('/all-orders')
+    .then(result => {
+        console.log(result);
+        addOrders(result.data);
+    })
+    .catch(err => {
+        console.log(err);
+    })
+};
+
+function addOrders(orders){
+    for(let order of orders){
+        let li = document.createElement('li');
+        li.innerHTML = `
+        ${order.price} Rs - 
+        ${order.dish} - 
+        <button type="button" id=id-${order.id} class="btn btn-success">Delete</button>
+        `
+        li.classList.add('list-group-item');
+        if(order.table == 1){
+            ulTable1.appendChild(li);
+        }
+        else if(order.table == 2){
+            ulTable2.appendChild(li);
+        }
+        else{
+            ulTable3.appendChild(li);
+        }
+        let dltBtn = document.getElementById(`id-${order.id}`);
+        dltBtn.addEventListener('click',() =>{
+            console.log('hello')
+        })
+    }
+}
+
+const submitOrder = (val) => {
+    axios.post('/orders',{
+        'price': price.value,
+        'dish': dish.value,
+        'table': val
+    })
+    .then((result) => {
+        console.log("Result: ",result.data);
+        return result.data.data;
+    })
+    .then((data) => {
+        addOrders([data]);
+    })
+    .catch((err) => {
+        console.log("Error: ",err);
+    })
+}
+
+submitBtn.addEventListener('click',() => {
     if(price.value == "" || dish.value == "" || hotelTable.value == ""){
         alert("Fill all the information!!");
     }else{
-        
+        submitOrder(hotelTable.value);
     }
-}
-submitBtn.addEventListener('click',submitOrder);
+});
+
 </script>
 </body>
 </html>
