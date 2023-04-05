@@ -10,6 +10,23 @@ const app = express();
 
 app.use(bodyParser.json())
 
+app.post('/order/:id',async (req,res,next) => {
+    console.log(req.params);
+    const order = await Orders.findOne({ where: { id: req.params.id } });
+if (order) {
+  order.destroy();
+  res.json({
+    "message": "Successfully Updated",
+    "data": order
+  })
+} else {
+  console.log("User not found");
+  res.json({
+    "message": "User not found",
+  })
+}
+})
+
 app.get('/all-orders',(req,res,next) => {
     Orders.findAll()
     .then(orders => {

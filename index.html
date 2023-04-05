@@ -84,10 +84,21 @@ function addOrders(orders){
             ulTable3.appendChild(li);
         }
         let dltBtn = document.getElementById(`id-${order.id}`);
-        dltBtn.addEventListener('click',() =>{
-            console.log('hello')
+        dltBtn.addEventListener('click',(e) =>{
+            dltDish(e,order.id);
         })
     }
+}
+
+function dltDish(e,id){
+    axios.post(`/order/${id}`)
+    .then(result => {
+        console.log(result);
+        e.target.parentElement.remove();
+    })
+    .catch(err => {
+        console.log(err);
+    })
 }
 
 const submitOrder = (val) => {
